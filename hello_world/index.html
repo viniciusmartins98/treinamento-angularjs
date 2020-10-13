@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="helloWorld">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="angular.js"></script>
+    <script>
+        // Angular module declaration, along with its dependencies between brackets 
+        angular.module("helloWorld", [/* Module dependencies */]);
+
+        // helloWorld module access
+        const helloWorldModule = angular.module("helloWorld");
+
+        // Defining controller. 
+        helloWorldModule.controller("helloWorldController", function ($scope) {
+            // $scope is responsable to connect views and controllers
+            $scope.message = "Hello world!";
+            $scope.helloWorldFunction = () => 'Hello world from a function!'; 
+        });
+    </script>
+    <title>AngularJS - Training</title>
+</head>
+<body>
+    <!-- Each html element with ng-controller prop can access the angular module -->
+    <div ng-controller="helloWorldController">
+        <div>
+            {{message}}
+        </div>
+        <div>
+            {{helloWorldFunction()}}
+        </div>
+    </div>
+</body>
+</html>
