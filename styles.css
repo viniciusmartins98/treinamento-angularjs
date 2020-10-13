@@ -1,0 +1,22 @@
+.jumbotron {
+  width: 400px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+  padding: 20px;
+}
+.table {
+  margin-top: 20px;
+}
+.table th, .table td{
+  text-align: center;
+}
+.form-control {
+  margin-bottom: 5px;
+}
+
+.selected {
+  background-color: rgb(255, 196, 0, 0.7) !important;
+  font-weight: bold !important;
+}

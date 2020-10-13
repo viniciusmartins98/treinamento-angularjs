@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="phoneList">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone list</title>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/bootstrap.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="lib/angular/angular.js"></script>
+    <script>
+        const phoneListModule = angular.module("phoneList", []);
+        phoneListModule.controller('phoneListController', function ($scope) {
+            $scope.app = 'Phone list';
+            $scope.contacts = [
+              {name: 'Vino', phone: '17948571923'},
+              {name: 'Lu', phone: '17918293845'},
+              {name: 'Mom', phone: '17981939485'},
+            ];
+            $scope.providers = [
+              {name: 'Oi', code: 14, type: 'cellphone'},
+              {name: 'Vivo', code: 15, type: 'cellphone'},
+              {name: 'Tim', code: 41, type: 'cellphone'},
+              {name: 'GVT', code: 25, type: 'phone'},
+              {name: 'Embratel', code: 21, type: 'phone'},
+            ];
+
+            // Recieves a contact to be created
+            $scope.addToContacts = (contact) => {
+              // Angular.copy avoids reference problems creating a new instance of the object instead of change the object by reference
+              $scope.contacts.push(angular.copy(contact));
+
+              // delete contact instance which was just inserted to the list.
+              delete $scope.contact;
+            }
+
+            $scope.removeFromContacts = (index) => {
+              $scope.contacts.splice(index, 1);
+            }
+
+            $scope.removeSelectedContacts = (contacts) => {
+              $scope.contacts = contacts.filter((contact) => !contact.selected);
+            }
+            
+            $scope.checkSelected = (contacts) => {
+              return contacts.some(contact => contact.selected);
+            }
+        })
+    </script>
+</head>
+<body ng-controller="phoneListController">
+    <div class="jumbotron">
+      <h4>{{app}}</h4>
+      <table class="table table-striped" ng-show="contacts.length > 0">
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Provider</th>
+          <th></th>
+        </tr>
+        <tr ng-class="{selected: contact.selected}" ng-repeat="(key, contact) in contacts">
+          <td><input type="checkbox" ng-model="contact.selected"></td>
+          <td>{{contact.name}}</td>
+          <td>{{contact.phone}}</td>
+          <td>{{contact.provider.code}}</td>
+          <td><button class="btn btn-default" ng-click="removeFromContacts(key)">Remove</button></td>
+        </tr>
+      </table>
+      <hr/>
+      <!-- ngModel creates a new model inside scope so it can be shared between view and controller -->
+      <input
+        class="form-control"
+        placeholder="Name"
+        type="text"
+        ng-model="contact.name"
+      />
+      <input
+        class="form-control"
+        placeholder="Phone"
+        type="text"
+        ng-model="contact.phone"
+      />
+      <select
+        class="form-control"
+        ng-model="contact.provider"
+        ng-options="provider.name for provider in providers"
+      >
+      <!-- If you wish to group options by cattegory you should use: -->
+      <!--ng-options="provider.name group by provider.type for provider in providers"-->
+        <option value="">Select a provider</option>
+      </select>
+      <!-- ngClick allows to invoke a function and add manipulate the new model created -->
+      <button
+        class="btn btn-primary btn-block"
+        ng-click="addToContacts(contact)"
+        ng-disabled="!contact.name || !contact.phone"
+      >
+        Add to contacts
+      </button>
+      <button
+        class="btn btn-danger btn-block"
+        ng-click="removeSelectedContacts(contacts)"
+        ng-show="checkSelected(contacts)"
+      >
+        Delete selected contacts
+      </button>
+    </div>
+</body>
+</html>
