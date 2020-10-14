@@ -1,5 +1,5 @@
 .jumbotron {
-  width: 400px;
+  width: 500px;
   text-align: center;
   margin-left: auto;
   margin-right: auto;
@@ -19,4 +19,15 @@
 .selected {
   background-color: rgb(255, 196, 0, 0.7) !important;
   font-weight: bold !important;
+}
+
+.input-error {
+  border-color: red !important;
+  outline: none !important;
+}
+
+.input-message-error {
+  color: red;
+  font-size: 12px;
+  text-align: left;
 }
