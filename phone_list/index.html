@@ -8,7 +8,8 @@
   <link rel="stylesheet" type="text/css" href="lib/bootstrap/bootstrap.css">  
   <link rel="stylesheet" href="styles.css">
   <script src="lib/angular/angular.js"></script>
-  <script src="lib/bootstrap/bootstrap.js"></script>
+  <script src="lib/jquery/jquery.js"></script>
+  <script src="lib/bootstrap/bootstrap.bundle.js"></script>
   <script>
     const phoneListModule = angular.module("phoneList", []);
     phoneListModule.controller('phoneListController', function ($scope) {
@@ -80,7 +81,7 @@
     </table>
     <hr />
     <!-- ngModel creates a new model inside scope so it can be shared between view and controller -->
-    <form name="formContact" class="was_validate">
+    <form name="formContact">
       <div class="form-group">
         <input class="form-control" placeholder="Name*" name="name" type="text" ng-model="contact.name" ng-required="true" ng-minlength="8" ng-class="{'input-error':  formContact.name.$invalid && formContact.name.$dirty}"/>
         <div class="input-message-error" ng-show="formContact.name.$error.required && formContact.name.$dirty">Name is required.</div>
