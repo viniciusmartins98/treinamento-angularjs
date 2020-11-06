@@ -1,0 +1,16 @@
+.ui-welcome {
+    background-color: #2266FF;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px 0;
+}
+
+.ui-welcome-title {
+    color: #FFF;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.ui-welcome-body {
+    color: #FFF;
+}

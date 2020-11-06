@@ -1,21 +1,38 @@
-angular.module("phoneList").controller('phoneListController', function ($scope, $http, uppercaseFilter, lowercaseFilter) {
+angular.module("phoneList").controller('phoneListController', function ($scope, contactAPI, providerAPI, serialGenerator, uppercaseFilter, lowercaseFilter) {
+    $scope.app = 'Phone List';
+    
+    // Initilizations
+    $scope.contacts = [];
+    $scope.providers = [];
+    $scope.regexPhone = /^\d{4,5}-\d{4}$/;
+    $scope.regexCpf = /^\d{3}.\d{3}.\d{3}-\d{2}$/;
+
     async function loadContacts() {
-        $http.get('http://localhost:3001/contacts').success((data) => {
-            $scope.contacts = data.map(contact => ({ ...contact, name: uppercaseFilter(contact.name), provider: { ...contact.provider, name: lowercaseFilter(contact.provider.name) } }));
-        });
+        contactAPI.getContacts()
+            .success((data) => {
+                $scope.contacts = data.map(contact => ({
+                    ...contact,
+                    name: uppercaseFilter(contact.name),
+                    provider: { ...contact.provider, name: lowercaseFilter(contact.provider.name) },
+                    serial: serialGenerator.generate()
+                }));
+                $scope.error = undefined;
+            })
+            .error(() => {
+                $scope.error = "Server is down, please try again later"
+            })
     }
 
     async function loadProviders() {
-        $http.get('http://localhost:3001/providers').success((data) => {
+        providerAPI.getProviders().success((data) => {
             $scope.providers = data;
         })
     }
 
     // Recieves a contact to be created
     $scope.addToContacts = (contact) => {
-        $http.post('http://localhost:3001/contacts', contact).success((data) => {
+        contactAPI.createContact(contact).success((data) => {
             $scope.contacts.push(data);
-            console.log(contacts);
         });
 
         // Angular.copy avoids reference problems creating a new instance of the object instead of change the object by reference
@@ -35,13 +52,6 @@ angular.module("phoneList").controller('phoneListController', function ($scope, 
     $scope.removeSelectedContacts = (contacts) => {
         $scope.contacts = contacts.filter((contact) => !contact.selected);
     }
-
-    $scope.app = 'Phone List';
-
-    $scope.contacts = [];
-    $scope.providers = [];
-
-    $scope.regexPhone = /^\d{4,5}-\d{4}$/;
 
     $scope.orderBy = (field) => {
         $scope.orderByField = field;

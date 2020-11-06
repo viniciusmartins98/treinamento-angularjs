@@ -7,98 +7,137 @@
   <title>Phone List</title>
   <link rel="stylesheet" type="text/css" href="lib/bootstrap/bootstrap.css">
   <link rel="stylesheet" href="style/app.css">
+  <link rel="stylesheet" href="style/alert-error.css">
+  <link rel="stylesheet" href="style/welcome.css">
   <script src="lib/angular/angular.js"></script>
   <script src="lib/angular/angular-locale_pt-br.js"></script>
   <script src="lib/jquery/jquery.js"></script>
   <script src="lib/bootstrap/bootstrap.bundle.js"></script>
   <script src="js/app.js"></script>
   <script src="js/controllers/phoneListController.js"></script>
+  <script src="js/services/contactAPIService.js"></script>
+  <script src="js/services/providerAPIService.js"></script>
+  <script src="js/services/serialGeneratorService.js"></script>
+  <script src="js/values/configValue.js"></script>
+  <script src="js/config/serialGeneratorConfig.js"></script>
+  <script src="js/filters/nameFilter.js"></script>
+  <script src="js/filters/ellipsisFilter.js"></script>
+  <script src="js/directives/uiAlertDirective.js"></script>
+  <script src="js/directives/uiWelcomeDirective.js"></script>
+  <script src="js/directives/uiCpfMaskDirective.js"></script>
 </head>
 
 <body ng-controller="phoneListController">
   <div class="jumbotron">
-    <h4><b>{{app}}</b></h4>
-    <input type="text" class="form-control" placeholder="Search" ng-model="search"/>
-    <table class="table table-borderless table-hover" ng-show="contacts.length > 0">
-      <thead>
-        <tr>
-          <th></th>
-          <th><a href="" ng-click="orderBy('name')">Name</a></th>
-          <th>Phone</th>
-          <th>Provider</th>
-          <th>Color</th>
-          <th>Price</th>
-          <th>Date</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- After a pipe '|' are the filter options, (Parameters - FilterType : Field : Reverse) -->
-        <tr ng-class="{selected: contact.selected}" ng-repeat="(key, contact) in contacts | filter : search | limitTo:10 | orderBy : orderByField : orderByDirection">
-          <td><input type="checkbox" ng-model="contact.selected"></td>
-          <td>{{contact.name}}</td>
-          <td>{{contact.phone}}</td>
-          <td>{{contact.provider.name}}</td>
-          <td>
-            <div style="width: 15px; height: 15px;" ng-style="{'background-color': contact.color}"></div>
-          </td>
-          <td>{{contact.price | currency}}</td>
-          <td>{{contact.date | date:'dd/MM/yyyy HH:mm'}}</td>
-          <td><button class="btn btn-default" ng-click="removeFromContacts(key)">Remove</button></td>
-        </tr>
-      </tbody>
-    </table>
-    <hr />
-    <!-- ngModel creates a new model inside scope so it can be shared between view and controller -->
-    <form name="formContact">
-      <div class="form-group">
-        <input class="form-control" placeholder="Name*" name="name" type="text" ng-model="contact.name"
-          ng-required="true" ng-minlength="8"
-          ng-class="{'input-error':  formContact.name.$invalid && formContact.name.$dirty}" />
-        <div class="input-message-error" ng-show="formContact.name.$error.required && formContact.name.$dirty">
-          Name is required.
-        </div>
-        <div class="input-message-error" ng-show="formContact.name.$error.minlength">
-          Name has to be at least 8 characters.
-        </div>
-      </div>
-      <div class="form-group">
-        <input class="form-control" placeholder="Phone*" name="phone" type="text" ng-model="contact.phone"
-          ng-required="true" ng-class="{'input-error':  formContact.phone.$invalid && formContact.phone.$dirty}"
-          ng-pattern="regexPhone" />
-        <div class="input-message-error" ng-show="formContact.phone.$error.required && formContact.phone.$dirty">
-          Phone is required.
-        </div>
-        <div class="input-message-error" ng-show="formContact.phone.$error.pattern">
-          Phone is inválid.
-        </div>
-      </div>
-      <div class="form-group">
-        <input class="form-control" placeholder="Color" type="text" ng-model="contact.color" />
-      </div>
-      <div class="form-group">
-        <select class="form-control" ng-model="contact.provider" name="provider"
-          ng-options="provider.name for provider in providers | orderBy:'name'" ng-required="true"
-          ng-class="{'input-error':  formContact.provider.$invalid && formContact.provider.$dirty}">
-          <!-- If you wish to group options by cattegory you should use: -->
-          <!--ng-options="provider.name group by provider.type for provider in providers"-->
-          <option value="">Select a provider*</option>
-        </select>
-        <div class="input-message-error" ng-show="formContact.provider.$invalid && formContact.provider.$dirty">Provider
-          is required.</div>
-      </div>
-    </form>
+    <welcome title="app">
+      <h5><b>The easiest way to find contacts.</b></h5>
+    </welcome>
 
-    <!-- ngClick allows to invoke a function and add manipulate the new model created -->
-    <button class="btn btn-primary btn-block" ng-click="addToContacts(contact)" ng-disabled="formContact.$invalid">
-      Add to contacts
-    </button>
-    <button class="btn btn-danger btn-block" ng-click="removeSelectedContacts(contacts)"
-      ng-show="checkSelected(contacts)">
-      Delete selected contacts
-    </button>
+    <div>
+      <input type="text" class="form-control" placeholder="Search" ng-model="search" />
+      <table class="table table-borderless table-hover" ng-show="contacts.length > 0">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Serial</th>
+            <th>CPF</th>
+            <th><a href="" ng-click="orderBy('name')">Name</a></th>
+            <th>Phone</th>
+            <th>Provider</th>
+            <th>Color</th>
+            <th>Price</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- After a pipe '|' are the filter options, (Parameters - FilterType : Field : Reverse) -->
+          <tr ng-class="{selected: contact.selected}"
+            ng-repeat="(key, contact) in contacts | filter : search | limitTo:10 | orderBy : orderByField : orderByDirection">
+            <td><input type="checkbox" ng-model="contact.selected"></td>
+            <td>{{contact.serial}}</td>
+            <td>{{contact.cpf}}</td>
+            <td>{{contact.name | name | ellipsis:4}}</td>
+            <td>{{contact.phone}}</td>
+            <td>{{contact.provider.name}}</td>
+            <td>
+              <div style="width: 15px; height: 15px;" ng-style="{'background-color': contact.color}"></div>
+            </td>
+            <td>{{contact.price | currency}}</td>
+            <td>{{contact.date | date:'dd/MM/yyyy HH:mm'}}</td>
+            <td><button class="btn btn-default" ng-click="removeFromContacts(key)">Remove</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <hr />
+      <!-- ngModel creates a new model inside scope so it can be shared between view and controller -->
+      <form name="formContact">
+        <div class="form-group">
+          <input class="form-control" placeholder="Name*" name="name" type="text" ng-model="contact.name"
+            ng-required="true" ng-minlength="8"
+            ng-class="{'input-error':  formContact.name.$invalid && formContact.name.$dirty}" />
+          <div class="input-message-error" ng-show="formContact.name.$error.required && formContact.name.$dirty">
+            Name is required.
+          </div>
+          <div class="input-message-error" ng-show="formContact.name.$error.minlength">
+            Name must have at least 8 characters.
+          </div>
+        </div>
+        <div class="form-group">
+          <input class="form-control" placeholder="Phone*" name="phone" type="text" ng-model="contact.phone"
+            ng-required="true" ng-class="{'input-error':  formContact.phone.$invalid && formContact.phone.$dirty}"
+            ng-pattern="regexPhone" />
+          <div class="input-message-error" ng-show="formContact.phone.$error.required && formContact.phone.$dirty">
+            Phone is required.
+          </div>
+          <div class="input-message-error" ng-show="formContact.phone.$error.pattern">
+            Phone is inválid.
+          </div>
+        </div>
+        <div class="form-group">
+          <input class="form-control" placeholder="Color" type="text" ng-model="contact.color" />
+        </div>
+        <div class="form-group">
+          <select class="form-control" ng-model="contact.provider" name="provider"
+            ng-options="provider.name for provider in providers | orderBy:'name'" ng-required="true"
+            ng-class="{'input-error':  formContact.provider.$invalid && formContact.provider.$dirty}">
+            <!-- If you wish to group options by cattegory you should use: -->
+            <!--ng-options="provider.name group by provider.type for provider in providers"-->
+            <option value="">Select a provider*</option>
+          </select>
+          <div class="input-message-error" ng-show="formContact.provider.$invalid && formContact.provider.$dirty">
+            Provider is required.
+          </div>
+        </div>
+        <div class="form-group">
+          <input class="form-control" placeholder="CPF*" name="cpf" type="text" ng-model="contact.cpf"
+            ng-required="true" ng-class="{'input-error':  formContact.cpf.$invalid && formContact.cpf.$dirty}"
+            ng-pattern="regexCpf"
+            ng-maxlength="14"
+            cpf-mask
+            maxlength="14"
+          />
+          <div class="input-message-error" ng-show="formContact.cpf.$error.required && formContact.cpf.$dirty">
+            CPF is required.
+          </div>
+          <div class="input-message-error" ng-show="formContact.cpf.$error.pattern">
+            CPF is inválid.
+          </div>
+        </div>
+      </form>
+
+      <!-- ngClick allows to invoke a function and add manipulate the new model created -->
+      <button class="btn btn-primary btn-block" ng-click="addToContacts(contact)" ng-disabled="formContact.$invalid">
+        Add to contacts
+      </button>
+      <button class="btn btn-danger btn-block" ng-click="removeSelectedContacts(contacts)"
+        ng-show="checkSelected(contacts)">
+        Delete selected contacts
+      </button>
+    </div>
+    <ui-alert title="Ops, something went wrong!" message="error" ng-show="error"></ui-alert>
   </div>
-  <div ng-include="'view/footer.html'"></div>
+  <div ng-include="'js/view/footer.html'"></div>
 
 </body>
 
