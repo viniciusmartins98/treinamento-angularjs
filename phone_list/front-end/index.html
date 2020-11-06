@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="style/app.css">
   <link rel="stylesheet" href="style/alert-error.css">
   <link rel="stylesheet" href="style/welcome.css">
+  <link rel="stylesheet" href="style/accordion.css">
   <script src="lib/angular/angular.js"></script>
   <script src="lib/angular/angular-locale_pt-br.js"></script>
   <script src="lib/jquery/jquery.js"></script>
@@ -25,6 +26,7 @@
   <script src="js/directives/uiAlertDirective.js"></script>
   <script src="js/directives/uiWelcomeDirective.js"></script>
   <script src="js/directives/uiCpfMaskDirective.js"></script>
+  <script src="js/directives/uiAccordionDirective.js"></script>
 </head>
 
 <body ng-controller="phoneListController">
@@ -33,6 +35,11 @@
       <h5><b>The easiest way to find contacts.</b></h5>
     </welcome>
 
+    <ui-accordions>
+      <ui-accordion title="Accordion 1">Content of accordion 1</ui-accordion>
+      <ui-accordion title="Accordion 2">Content of accordion 2</ui-accordion>
+      <ui-accordion title="Accordion 3">Content of accordion 3</ui-accordion>
+    </ui-accordions>
     <div>
       <input type="text" class="form-control" placeholder="Search" ng-model="search" />
       <table class="table table-borderless table-hover" ng-show="contacts.length > 0">
